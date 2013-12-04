@@ -1,0 +1,8 @@
+config:
+  atom:
+    title: nodewalk
+    id: 'tag:asharpminor.com,2013:/nodewalk'
+    author:
+      name: XXX YYY
+      email: XXX@example.com
+  dbConnection: 'postgres://user:password@localhost:5433/walkdb'
