@@ -34,10 +34,8 @@ exports.decode = function (str) {
     var n = 0, j = 0;
     for (var i = 0; i < ar.length; i++ ) {
 	var k = ar[i] - 63;
-console.log(k);
 
 	var is_last = !(k & 0x20);
-console.log(is_last);
 	k &= 0x1f;
 	n |= (k << (j*5));
 	if (is_last) {
@@ -47,7 +45,6 @@ console.log(is_last);
             j += 1;
 	}
     }
-console.log(fs);
     var points = [];
     var p1 = 0, p2 = 0;
     var f1, f2;
