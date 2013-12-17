@@ -18,14 +18,13 @@
     % vi config/development.yml
 
 ```yaml:config/development.yml
-config:
-  atom:
-    title: nodewalk
-    id: 'tag:asharpminor.com,2013:/nodewalk'
-    author:
-      name: XXX YYY
-      email: XXX@example.com
-  dbConnection: 'postgres://user:password@localhost:5433/walkdb'
+atom:
+  title: nodewalk
+  id: 'tag:asharpminor.com,2013:/nodewalk'
+  author:
+    name: XXX YYY
+    email: XXX@example.com
+dbConnection: 'postgres://user:password@localhost:5433/walkdb'
 ```
 
 ##3. node module setup

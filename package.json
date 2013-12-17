@@ -1,6 +1,6 @@
 {
   "name": "nodewalk",
-  "version": "0.0.1",
+  "version": "0.1.5",
   "private": true,
   "scripts": {
       "start": "node app.js"
@@ -11,6 +11,9 @@
       "pg": "*",
       "async": "*",
       "config": "*",
-      "yaml": "*"
+      "yaml": "*",
+      "sequelize": "*",
+      "date-utils": "*",
+      "geos": "*"
   }
 }
