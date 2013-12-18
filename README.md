@@ -25,6 +25,7 @@ atom:
     name: XXX YYY
     email: XXX@example.com
 dbConnection: 'postgres://user:password@localhost:5433/walkdb'
+port: 3000
 ```
 
 ##3. node module setup
