@@ -1,18 +1,25 @@
-var encoder = require("./path_encoder");
-var config  = require('config');
-var url     = require('url');
-var util    = require('util');
-var models  = require('./models');
-var geos    = require('geos');
-var Walk    = models.Walk;
-var Area    = models.Area
+var encoder = require("./path_encoder")
+,   config  = require('config')
+,   url     = require('url')
+,   util    = require('util')
+,   models  = require('./models')
+,   geos    = require('geos')
+,   fs      = require('fs')
+,   Walk    = models.Walk
+,   Area    = models.Area;
 
 /*
  * GET home page.
  */
 
 exports.index = function(req, res){
-  res.render('index');
+    fs.readFile('package.json', function (err, data) {
+	var json = JSON.parse(data);
+	res.render('index', {
+	    app_version: json.version,
+	    app_env: process.env.NODE_ENV
+	});
+    });
 };
 
 
