@@ -1,0 +1,4 @@
+{
+    "dbConnection": "postgres://user:password@localhost:5433/walkdb",
+    "port": 3000
+}

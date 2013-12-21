@@ -146,17 +146,3 @@ exports.export = function(req, res) {
     });
 };
 
-exports.atom = function(req, res) {
-    domain = req.protocol + '://' + req.get('host');
-    Walk.findAll({ order : "date DESC", limit: 15 }).success(function (rows) {
-	 res.type('application/atom+xml');
-	 res.render('atom', {
-	     config: config,
-	     walks: rows.map(function (row) { return row.asObject(true); }),
-	     req: req,
-	     domain: domain
-	 });
-    });
-
-
-};

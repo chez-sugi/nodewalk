@@ -35,7 +35,6 @@ app.get('/destroy/:id', routes.destroy);
 app.post('/show', routes.show);
 app.post('/save', routes.save);
 app.get('/export/:id', routes.export);
-app.get('/atom', routes.atom);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
