@@ -30,12 +30,11 @@ exports.encode = function (path) {
 
 exports.decode = function (str) {
     var fs = []
-    var ar = str.split('').map(function (s) { return s.charCodeAt(0); })
+    var buf = new Buffer(str, 'ascii');
     var n = 0, j = 0;
-    for (var i = 0; i < ar.length; i++ ) {
-	var k = ar[i] - 63;
-
-	var is_last = !(k & 0x20);
+    for (var i = 0; i < buf.length; i++ ) {
+	var k = buf[i] - 63;
+	var is_last = ((k & 0x20) === 0);
 	k &= 0x1f;
 	n |= (k << (j*5));
 	if (is_last) {
@@ -48,7 +47,7 @@ exports.decode = function (str) {
     var points = [];
     var p1 = 0, p2 = 0;
     var f1, f2;
-    while (f1 = fs.shift()) {
+    while ((f1 = fs.shift()) !== undefined) {
 	f2 = fs.shift();
 	p1 += f1;
 	p2 += f2;
