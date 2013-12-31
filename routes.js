@@ -1,9 +1,7 @@
-var encoder = require("./path_encoder")
-,   config  = require('config')
+var config  = require('config')
 ,   url     = require('url')
 ,   util    = require('util')
 ,   models  = require('./models')
-,   geos    = require('geos')
 ,   fs      = require('fs')
 ,   Walk    = models.Walk
 ,   Area    = models.Area;
@@ -26,18 +24,21 @@ exports.index = function(req, res){
 
 exports.search = function(req, res){
     var order_hash = {
-	"new_first"   : "date desc",
-	"old_first"   : "date",
-	"long_first"  : "length desc",
-	"short_first" : "length",
-	"east_first"  : "xmax(PATH) desc",
-	"west_first"  : "xmin(PATH)",
-	"south_first" : "ymin(PATH)",
-	"north_first" : "ymax(PATH) desc"
+	"newest_first"       : "date desc",
+	"oldest_first"       : "date",
+	"longest_first"      : "length desc",
+	"shortest_first"     : "length",
+	"easternmost_first"  : "xmax(PATH) desc",
+	"westernmost_first"  : "xmin(PATH)",
+	"southernmost_first" : "ymin(PATH)",
+	"northernmost_first" : "ymax(PATH) desc",
+	"nearest_first"      : "distance"
     };
+    var where;
     var order = order_hash[req.query.order] || 'date desc';
 	
-    var where;
+    var attributes = ['id', 'date', 'start', 'end', 'path', "length"];
+    
     if (req.query.id) {
 	where = ['id = ?', req.query.id];
     }
@@ -49,10 +50,15 @@ exports.search = function(req, res){
 	var longitude = parseFloat(req.query.longitude);
 	var radius    = parseFloat(req.query.radius);
 	var dlat      = radius*180/Math.PI/models.EARTH_RADIUS;
-	var dlon      = dlat/Math.cos(longitude/180*Math.PI);
-
-	where = ["st_setsrid(st_makebox2d(st_point(?, ?), st_point(?, ?)), ?) && path and st_distance_sphere(path, st_setsrid(st_point(?, ?),?)) <= ?",
-		 longitude-dlon, latitude-dlat, longitude+dlon, latitude+dlat, models.SRID, longitude, latitude, models.SRID, radius];
+	var mlat      = latitude > 0 ? latitude + dlat : latitude - dlat;
+	var dlon      = dlat/Math.cos(mlat/180*Math.PI);
+	var center    = Walk.getPoint(longitude, latitude);
+	var lb        = Walk.getPoint(longitude-dlon, latitude-dlat);
+	var rt        = Walk.getPoint(longitude+dlon, latitude+dlat);
+	attributes.push([ util.format("st_distance(path, '%s', true)/1000", center), 'distance' ]);
+	
+	where = ["st_makebox2d(?, ?) && path and st_distance(path, ?, TRUE) <= ?",
+		 lb, rt,  center, radius];
     }
     else if (req.query.type == 'areas') {
 	var areas = req.query.areas.split(/,/).map(function (elm) { return "'" + elm + "'"; }).join(',');
@@ -62,12 +68,26 @@ exports.search = function(req, res){
 	var linestring = Walk.decodePath(req.query.searchPath);
 	where = ["path && ? AND ST_Intersects(path, ?)", linestring, linestring ];
     }
+    else if (req.query.type == 'similar') {
+	var max_distance = req.query.max_distance || 4000;
+	linestring = Walk.decodePath(req.query.searchPath);
+	extent     = Walk.getPathExtent(req.query.searchPath);
+	dlat       = max_distance*180/Math.PI/models.EARTH_RADIUS;
+	mlat       = Math.max(Math.abs(extent.ymax + dlat), Math.abs(extent.ymin-dlat));
+	dlon       = dlat/Math.cos(mlat/180*Math.PI);
+	lb         = Walk.getPoint(extent.xmin-dlon, extent.ymin-dlat);
+	rt         = Walk.getPoint(extent.xmax+dlon, extent.ymax+dlat);
+
+	attributes.push([util.format("ST_HausdorffDistance(ST_Transform(path, %d), ST_Transform('%s', %d))/1000", models.SRID_FOR_SIMILAR_SEARCH, linestring, models.SRID_FOR_SIMILAR_SEARCH), 'distance']);
+	where = ['ST_Within(path, ST_SetSRID(ST_MakeBox2d(?, ?), ?)) AND ST_HausdorffDistance(ST_Transform(path, ?), ST_Transform(?, ?)) < ?', lb, rt, models.SRID, models.SRID_FOR_SIMILAR_SEARCH, linestring, models.SRID_FOR_SIMILAR_SEARCH, max_distance];
+    }
     else {
 	where = null;
     }
     var limit  = parseInt(req.query.limit) || 20;
     var offset = parseInt(req.query.offset) || 0;
     Walk.findAndCountAll({
+	attributes : attributes,
 	order  : order, 
 	where  : where,
 	offset : offset,

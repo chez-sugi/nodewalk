@@ -10,6 +10,8 @@ var SRID = 4326;
 
 exports.SRID = SRID;
 exports.EARTH_RADIUS = EARTH_RADIUS;
+exports.SRID_FOR_SIMILAR_SEARCH = 32662;
+
 var wkbreader  = new geos.WKBReader();
 var jsonwriter = new geos.GeoJSONWriter();
 var jsonreader = new geos.GeoJSONReader();
@@ -36,10 +38,23 @@ exports.Walk = sequelize.define('walks', {
 }, {
     underscored: true,
     classMethods: {
+	getPoint: function (x, y) {
+	   return util.format('SRID=%d;POINT(%d %d)', SRID, x, y);
+	},
         decodePath: function (path) {
             var json = { type: 'LineString', coordinates: encoder.decode(path) };
             return util.format('SRID=%d;%s', SRID, wktwriter.write(jsonreader.read(json)));
-        }
+        },
+	getPathExtent: function (path) {
+	    var points = encoder.decode(path);
+	    return points.reduce(function (pv, cv) {
+		if (pv.xmax === undefined || pv.xmax < cv[0] ) pv.xmax = cv[0];
+		if (pv.xmin === undefined || pv.xmin > cv[0] ) pv.xmin = cv[0];
+		if (pv.ymax === undefined || pv.ymax < cv[1] ) pv.ymax = cv[1];
+		if (pv.ymin === undefined || pv.ymin > cv[1] ) pv.ymin = cv[1];
+		return pv;
+	    }, {});
+	}
     },
     instanceMethods: {
         pathJSON : function () {
@@ -57,7 +72,8 @@ exports.Walk = sequelize.define('walks', {
 		length : this.length,
 		path : omitPath ? null : this.encodedPath(),
                 created_at: this.created_at,
-                updated_at: this.updated_at
+                updated_at: this.updated_at,
+		distance: this.distance
 	    };
 	}
     }
