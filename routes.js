@@ -16,7 +16,7 @@ exports.index = function(req, res){
 	res.render('index', {
 	    app_version: json.version,
 	    app_env: process.env.NODE_ENV,
-	    twitter_hashtags: config.twitter_hashtags
+	    config: config
 	});
     });
 };
