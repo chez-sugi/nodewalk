@@ -73,7 +73,7 @@ exports.search = function(req, res){
         }
         else if (req.query.filter == 'cities') {
             var cities = req.query.cities.split(/,/).map(function (elm) { return "'" + elm + "'"; }).join(',');
-            exprs.push("EXISTS (SELECT * FROM areas WHERE jcode IN (" + cities + ")", "path && the_geom AND ST_Intersects(path, the_geom))");
+            exprs.push("EXISTS (SELECT * FROM areas WHERE jcode IN (" + cities + ") AND path && the_geom AND ST_Intersects(path, the_geom))");
         }
         else if (req.query.filter == 'crossing') {
             var linestring = Walk.decodePath(req.query.searchPath);
