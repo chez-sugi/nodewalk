@@ -29,7 +29,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/search', routes.search);
-app.get('/add_area', routes.add_area);
+app.get('/add_city', routes.add_city);
 app.get('/show/:id', routes.show);
 app.get('/destroy/:id', routes.destroy);
 app.post('/show', routes.show);

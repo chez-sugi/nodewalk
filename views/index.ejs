@@ -22,6 +22,7 @@
     <div class="navbar navbar-default navbar-static-top" id="nav" role="navigation">
         <a class="navbar-brand" href="https://github.com/chez-sugi/nodewalk">NodeWalk</a>
         <ul class="nav navbar-nav">
+            <li><a ng-click="showAdmin()" href="#">Admin</a></li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     Path
@@ -34,18 +35,18 @@
                     <li><a ng-click="showModal()" href="#" >export/import...</a></li>
                 </ul>
             </li>
-            <li class="dropdown" ng-show="searchForm.type == 'areas'">
+            <li class="dropdown" ng-show="searchForm.filter == 'cities'">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    Areas
+                    Cities
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a ng-click="resetAreas()"  href="#">reset</a></li>
+                    <li><a ng-click="resetCities()"  href="#">reset</a></li>
                 </ul>
             </li>
-            <li class="dropdown" ng-show="searchForm.type == 'neighbor'">
+            <li class="dropdown" ng-show="searchForm.filter == 'circle'">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    Neighbor
+                    Circle
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
@@ -55,9 +56,17 @@
                     <li><a ng-click="setRadius(100)"  href="#">radius: 100m</a></li>
                 </ul>
             </li>
-
-            <li><a ng-click="showElevation()" href="#">elevation</a></li>
-            <li><a ng-click="showPanorama()" href="#">street view</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    Accessory
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a ng-click="showElevation()" href="#">elevation</a></li>
+                    <li><a ng-click="showPanorama()" href="#">street view</a></li>
+                    <li><a ng-click="currentService = 'none'" href="#" >none</a></li>
+                </ul>
+            </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     Theme
@@ -78,154 +87,181 @@
                 <input type="hidden" name="latitude" value="{{searchForm.latitude}}" />
                 <input type="hidden" name="longitude" value="{{searchForm.longitude}}" />
                 <input type="hidden" name="radius" value="{{searchForm.radius}}" />
-                <input type="hidden" name="areas" value="{{searchForm.areas}}"  />
+                <input type="hidden" name="cities" value="{{searchForm.cities}}"  />
                 <input type="hidden" name="search_path" value="{{searchForm.searchPath}}"  />
-                <div id="typeBox" class="form-group">
-                    <label class="radio-inline col-xs-3 col-xs-offset-1">
-                        <input type="radio" name="type" ng-model="searchForm.type" value="neighbor" id="type_neighbor"  /> neighbor</label>
-                        <label class="radio-inline col-xs-2">
-                            <input type="radio" name="type" ng-model="searchForm.type" value="areas" id="type_areas" /> areas</label>
-                            <label class="radio-inline col-xs-2">
-                                <input type="radio" name="type" ng-model="searchForm.type" value="similar" id="type_similar" /> similar</label>
-                                <label class="radio-inline col-xs-2">
-                                    <input type="radio" name="type" ng-model="searchForm.type" value="all" id="type_all" checked /> all</label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-3" for="order">order</label>
-                                    <div class="col-xs-9">
-                                        <select ng-model="searchForm.order" class="form-control">
-                                            <option value="newest_first">newest first</option>
-                                            <option value="oldest_first">oldest first</option>
-                                            <option value="longest_first">longest first</option>
-                                            <option value="shortest_first">shortest first</option>
-                                            <option value="easternmost_first">easternmost first</option>
-                                            <option value="westernmost_first">westernmost first</option>
-                                            <option value="southernmost_first">southernmost first</option>
-                                            <option value="northernmost_first">northernmost first</option>
-                                            <option value="nearest_first" ng-if="searchForm.type == 'neighbor' || searchForm.type == 'similar'">nearest first</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-3" for="limit">limit</label>
-                                    <div class="col-xs-9">
-                                        <input type="text" ng-model="searchForm.limit"  class="form-control" />
-                                    </div>
-                                </div>
-                                <div  class="form-group">
-                                    <div class=" col-xs-offset-3 col-xs-9">
-                                        <button ng-click="search()" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>search</button>
-                                        <input type="reset" value="reset" class="btn" />
-                                    </div>
-                                </div>
-                            </form>
-                            <p id="message" class="well well-sm col-xs-12" ng-show="walks != null">
-                                <strong ng-switch on="total_count">
-                                    <span ng-switch-when="0">No results</span>
-                                    <span ng-switch-when="1">1 / 1 item</span>
-                                    <span ng-switch-default>{{ walks.length }} / {{ total_count }} items</span>
+                <div id="filterBox" class="form-group">
+                    <label class="control-label col-xs-3">filter</label>
+                    <div class="col-xs-9">
+                        <select ng-model="searchForm.filter" class="form-control">
+                            <option value="any">Any</option>
+                            <option value="circle">Circle</option>
+                            <option value="cities">Cities</option>
+                            <option value="hausdorff">Hausdorff</option>
+                            <option value="crossing">Crossing</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+<label class="control-label col-xs-3">month</label>
+                    <div class="col-xs-3">
+                        <select ng-model="searchForm.month" class="form-control">
+                            <option value=""></option>
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">Jun</option>
+                            <option value="7">Jul</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                    <label class="control-label col-xs-2">year</label>
+                    <div class="col-xs-4">
+                        <select ng-model="searchForm.year" class="form-control">
+                            <option value=""></option>
+                            <option ng-repeat="y in years" value="{{y}}">{{y}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-3" for="order">order</label>
+                    <div class="col-xs-4">
+                        <select ng-model="searchForm.order" class="form-control">
+                            <option value="newest_first">newest first</option>
+                            <option value="oldest_first">oldest first</option>
+                            <option value="longest_first">longest first</option>
+                            <option value="shortest_first">shortest first</option>
+                            <option value="easternmost_first">easternmost first</option>
+                            <option value="westernmost_first">westernmost first</option>
+                            <option value="southernmost_first">southernmost first</option>
+                            <option value="northernmost_first">northernmost first</option>
+                            <option value="nearest_first" ng-if="searchForm.filter == 'circle' || searchForm.filter == 'hausdorff'">nearest first</option>
+                        </select>
+                    </div>
+                    <label class="control-label col-xs-2" for="limit">limit</label>
+                    <div class="col-xs-3">
+                        <input type="text" ng-model="searchForm.limit"  class="form-control" />
+                    </div>
+                </div>
+                <div  class="form-group">
+                    <div class=" col-xs-offset-3 col-xs-9">
+                        <button ng-click="search()" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>search</button>
+                        <input type="reset" value="reset" class="btn" />
+                    </div>
+                </div>
+            </form>
+            <p id="message" class="well well-sm col-xs-12" ng-show="walks != null">
+                <strong ng-switch on="total_count">
+                    <span ng-switch-when="0">No results</span>
+                    <span ng-switch-when="1">1 / 1 item</span>
+                    <span ng-switch-default>{{ walks.length }} / {{ total_count }} items</span>
 
-                                </strong> : <button ng-click="showPaths()" ng-show="walks.length > 0" class="btn" ><span class="glyphicon glyphicon-map-marker"></span>show all</button>	      <label class="radio-inline" ng-show="walks[0].distance != undefined">
-                                    <input type="checkbox" name="" ng-model="show_distance" value="" />show distance</label></p>
-                                    <div class="table-wrapper col-xs-12">
-                                        <table class="table table-condensed table-striped table-hover">
-                                            <tbody id="tbody">
-                                                <tr ng-repeat="item in walks" ng-click="showPath(item.id)">
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td class="date">{{item.date}}</td>
-                                                    <td class="name"><div>{{item.start}}</div></td><td class="name"><div>{{item.end}}</div></td><td class="way">{{show_distance && item.distance !== undefined ? item.distance : item.length | number:1  }}</td>
-                                                    <td>
-                                                        <a ng-href="{{twitter_url(item, '<%= config.twitter_hashtags %>')}}" target="_blank" class="glyphicon glyphicon-share" ng-click="stop_event($event)"></a>
-                                                    </td>
-                                                </tr>
+                </strong> : <button ng-click="showPaths()" ng-show="walks.length > 0" class="btn" ><span class="glyphicon glyphicon-map-marker"></span>show all</button>
+                <label class="radio-inline" ng-show="walks[0].distance != undefined">
+                    <input type="checkbox" name="" ng-model="show_distance" value="" />show distance</label>
+            </p>
+            <div class="table-wrapper col-xs-12">
+                <table class="table table-condensed table-striped table-hover">
+                    <tbody id="tbody">
+                        <tr ng-repeat="item in walks" ng-click="showPath(item.id)">
+                            <td>{{ $index + 1 }}</td>
+                            <td class="date">{{item.date}}</td>
+                            <td class="name"><div>{{item.start}}</div></td><td class="name"><div>{{item.end}}</div></td><td class="way">{{show_distance && item.distance !== undefined ? item.distance : item.length | number:1  }}</td>
+                            <td>
+                                <a ng-href="{{twitter_url(item, '<%= config.twitter_hashtags %>')}}" target="_blank" class="glyphicon glyphicon-share" ng-click="stop_event($event)"></a>
+                            </td>
+                        </tr>
 
-                                            </tbody>
-                                        </table>
-                                        <button class="btn btn-primary" ng-show="params" ng-click="getNext(params)">more</button>
-                                    </div>
+                    </tbody>
+                </table>
+                <button class="btn btn-primary" ng-show="params" ng-click="getNext(params)">more</button>
+            </div>
+        </div><!-- /side -->
+        <div id="main" >
+            <div my-map id="map"></div>
+            <div id="elevation-box" ng-show="currentService == 'elevation'">
+                <div my-elevation>
+                    <button class="close" ng-click="closeService()">&times;</button>
+                </div>
+            </div>
+            <div id="panorama-box" ng-show="currentService == 'panorama'">
+                <div id="panorama" my-panorama></div>
+                <div id="panorama_control">
+                    <button class="btn" ng-click="backwardPanorama()"><span class="glyphicon glyphicon-fast-backward"></span></button>
+                    <button class="btn" ng-click="prevPanorama()"><span class="glyphicon glyphicon-step-backward"></span></button>
+                    <span class="label label-info"><span>{{panoramaIndex}}</span> / <span>{{panoramaCount}}</span></span>
+                    <button class="btn" ng-click="nextPanorama()"><span class="glyphicon glyphicon-step-forward"></span></button>
+                    <button class="btn" ng-click="forwardPanorama()"><span class="glyphicon glyphicon-fast-forward"></span></button>
 
-                                </div>
-                                <div id="main" >
-                                    <div my-map id="map"></div>
-                                    <div id="elevation-box" ng-show="currentService == 'elevation'">
-                                        <div my-elevation></div>
-                                        <button class="close" ng-click="closeService()">&times;</button>
-                                    </div>
-                                    <div id="panorama-box" ng-show="currentService == 'panorama'">
-                                        <div id="panorama" my-panorama></div>
-                                        <div id="panorama_control">
-                                            <button class="btn" ng-click="backwardPanorama()"><span class="glyphicon glyphicon-fast-backward"></span></button>
-                                            <button class="btn" ng-click="prevPanorama()"><span class="glyphicon glyphicon-step-backward"></span></button>
-                                            <span class="label label-info"><span>{{panoramaIndex}}</span> / <span>{{panoramaCount}}</span></span>
-                                            <button class="btn" ng-click="nextPanorama()"><span class="glyphicon glyphicon-step-forward"></span></button>
-                                            <button class="btn" ng-click="forwardPanorama()"><span class="glyphicon glyphicon-fast-forward"></span></button>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div my-modal class="modal fade">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                <h4 class="modal-title">Export/Import</h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <textarea ng-model="path_json" placeholder="input text or drag JSON file."></textarea>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary" ng-click="importJSON(path_json)">Import</button>
-                                            </div>
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal-dialog -->
-                                </div><!-- /.modal -->
-                                <div class="modal fade">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                <h4 class="modal-title">Upload</h4>
-                                            </div>
-                                            <form ng-sbmit="save()" class="form-horizontal" role="form">
-                                                <div class="modal-body">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-xs-3" for="id">id</label>
-                                                        <div class="col-xs-9">
-                                                            <input type="text" readonly="readonly" ng-model="selection.id" class="form-control" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="control-label col-xs-3" for="date">date</label>
-                                                        <div class="col-xs-9">
-                                                            <input type="date" name="date" ng-model="selection.date" class="form-control" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="control-label col-xs-3" for="start">start</label>
-                                                        <div class="col-xs-9">
-                                                            <input type="text" name="start" ng-model="selection.start" class="form-control" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="control-label col-xs-3" for="end">end</label>
-                                                        <div class="col-xs-9">
-                                                            <input type="text" name="end" ng-model="selection.end" class="form-control" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <input type="hidden" name="save_path" ng-mode="selection.path"  />
-                                                <div  class="form-group">
-                                                    <div class="col-xs-offset-3 col-xs-9">
-                                                        <button ng-click="save()" class="btn btn-primary"><span class="glyphicon glyphicon-record"></span>save</button>
-                                                        <button ng-click="destroy()" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>delete</button>
-                                                        <button ng-click="resetAdminForm()" class="btn">reset</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </body>
-                            </html>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div my-modal class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Export/Import</h4>
+                </div>
+                <div class="modal-body">
+                    <textarea ng-model="path_json" placeholder="input text or drag JSON file."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-click="importJSON(path_json)">Import</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div my-admin class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Admin</h4>
+                </div>
+                <form ng-sbmit="save()" class="form-horizontal" role="form">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="control-label col-xs-3" for="id">id</label>
+                            <div class="col-xs-9">
+                                <input type="text" readonly="readonly" ng-model="selection.id" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-xs-3" for="date">date</label>
+                            <div class="col-xs-9">
+                                <input type="date" name="date" ng-model="selection.date" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-xs-3" for="start">start</label>
+                            <div class="col-xs-9">
+                                <input type="text" name="start" ng-model="selection.start" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-xs-3" for="end">end</label>
+                            <div class="col-xs-9">
+                                <input type="text" name="end" ng-model="selection.end" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="save_path" ng-mode="selection.path"  />
+                    <div  class="form-group">
+                    <div class="col-xs-offset-3 col-xs-9">
+                    <button ng-click="save()" class="btn btn-primary"><span class="glyphicon glyphicon-record"></span>save</button>
+                    <button ng-click="destroy()" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>delete</button>
+                    <button ng-click="resetAdminForm()" class="btn">reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
