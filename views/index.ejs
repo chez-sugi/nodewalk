@@ -6,7 +6,7 @@
     <title>NodeWalk(<%= app_env %>;v<%= app_version %>)</title>
     <link ng-href="{{themeUri}}" rel="stylesheet">
     <link href="/stylesheets/application.css" media="screen" rel="stylesheet" />
-
+    <script src="https://platform.twitter.com/widgets.js"></script>
     <script src="http://www.google.com/jsapi"></script>
     <script src="http://maps.google.com/maps/api/js?sensor=true&libraries=geometry,drawing"></script>
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -102,7 +102,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-<label class="control-label col-xs-3">month</label>
+                    <label class="control-label col-xs-3">month</label>
                     <div class="col-xs-3">
                         <select ng-model="searchForm.month" class="form-control">
                             <option value=""></option>
@@ -173,7 +173,7 @@
                             <td class="date">{{item.date}}</td>
                             <td class="name"><div>{{item.start}}</div></td><td class="name"><div>{{item.end}}</div></td><td class="way">{{show_distance && item.distance !== undefined ? item.distance : item.length | number:1  }}</td>
                             <td>
-                                <a ng-href="{{twitter_url(item, '<%= config.twitter_hashtags %>')}}" target="_blank" class="glyphicon glyphicon-share" ng-click="stop_event($event)"></a>
+                                <a href="#" class="glyphicon glyphicon-info-sign" ng-click="showInfo(item, $event)"></a>
                             </td>
                         </tr>
 
@@ -182,6 +182,7 @@
                 <button class="btn btn-primary" ng-show="params" ng-click="getNext(params)">more</button>
             </div>
         </div><!-- /side -->
+
         <div id="main" >
             <div my-map id="map"></div>
             <div id="elevation-box" ng-show="currentService == 'elevation'">
@@ -200,8 +201,8 @@
 
                 </div>
             </div>
-        </div>
-    </div>
+        </div><!-- /main -->
+    </div><!-- /main-row -->
     <div my-modal class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -254,14 +255,43 @@
                         </div>
                     </div>
                     <input type="hidden" name="save_path" ng-mode="selection.path"  />
-                    <div  class="form-group">
-                    <div class="col-xs-offset-3 col-xs-9">
-                    <button ng-click="save()" class="btn btn-primary"><span class="glyphicon glyphicon-record"></span>save</button>
-                    <button ng-click="destroy()" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>delete</button>
-                    <button ng-click="resetAdminForm()" class="btn">reset</button>
+                    <div  class="modal-footer">
+                        <button ng-click="save()" class="btn btn-primary"><span class="glyphicon glyphicon-record"></span>save</button>
+                        <button ng-click="destroy()" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>delete</button>
+                        <button ng-click="resetAdminForm()" class="btn">reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div my-info class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Info</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">title</label>
+                        <div class="col-xs-10">
+                            <input type="text" readonly="readonly" ng-model="info_title" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">uri</label>
+                        <div class="col-xs-10">
+                            <input type="text" readonly="readonly" ng-model="info_uri" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <label class="control-label col-xs-2">Share</label>
+                    <div class="col-xs-10" id="twitter_div" data-hashtags="<%= config.twitter_hashtags %>">
+                    </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 </body>
 </html>
