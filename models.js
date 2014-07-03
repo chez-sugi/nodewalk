@@ -24,7 +24,7 @@ var sequelize = new Sequelize(config.dbConnection, {
 
 exports.sequelize = sequelize;
 
-exports.Walk = sequelize.define('walks', {
+sequelize.define('walks', {
     id:	        Sequelize.INTEGER,
     date:       Sequelize.STRING,
     start: 	Sequelize.STRING,
@@ -60,46 +60,46 @@ exports.Walk = sequelize.define('walks', {
         pathJSON : function () {
             return jsonwriter.write(wkbreader.readHEX(this.path));
         },
-	encodedPath: function () {
-	    return encoder.encode(this.pathJSON().coordinates);
-	},
-	asObject: function (omitPath) {
-	    return { 
-		id: this.id, 
-		date : this.date.toFormat('YYYY-MM-DD'), 
-		start: this.start, 
-		end: this.end, 
-		length : this.length,
-		path : omitPath ? null : this.encodedPath(),
-                created_at: this.created_at,
-                updated_at: this.updated_at,
-		distance: this.distance
-	    };
-	}
+    	encodedPath: function () {
+    	    return encoder.encode(this.pathJSON().coordinates);
+    	},
+    	asObject: function (omitPath) {
+    	    return {
+    		id: this.id,
+    		date : this.date.toFormat('YYYY-MM-DD'),
+    		start: this.start,
+    		end: this.end,
+    		length : this.length,
+    		path : omitPath ? null : this.encodedPath(),
+                    created_at: this.created_at,
+                    updated_at: this.updated_at,
+    		distance: this.distance
+    	    };
+    	}
     }
 });
 
-exports.Area = sequelize.define('areas', {
-    jcode:	Sequelize.INTEGER,
+sequelize.define('areas', {
+    jcode:	{
+        type:       Sequelize.INTEGER,
+        primaryKey: true
+    },
     the_geom:   Sequelize.BLOB
 }, {
+    timestamps:  false,
     underscored: true,
     instanceMethods: {
-	encodedGeom: function () {
-	    var obj = jsonwriter.write(wkbreader.readHEX(this.the_geom));
-	    return  obj.coordinates.map(function (polygones) {
-		return encoder.encode(polygones[0]);
-	    }).join(' ');
-	},
-	asObject: function () {
-	    return { 
-		jcode:     this.jcode, 
-		the_geom : this.encodedGeom()
-	    };
-	}
-
-
+    	encodedGeom: function () {
+    	    var obj = jsonwriter.write(wkbreader.readHEX(this.the_geom));
+    	    return  obj.coordinates.map(function (polygones) {
+    		return encoder.encode(polygones[0]);
+    	    }).join(' ');
+    	},
+    	asObject: function () {
+    	    return {
+    		jcode:     this.jcode,
+    		the_geom : this.encodedGeom()
+    	    };
+    	}
     }
 });
-			
-

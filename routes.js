@@ -3,8 +3,8 @@ var config  = require('config')
 ,   util    = require('util')
 ,   models  = require('./models')
 ,   fs      = require('fs')
-,   Walk    = models.Walk
-,   Area    = models.Area;
+,   Walk    = models.sequelize.models.walks
+,   Area    = models.sequelize.models.areas;
 
 /*
 * GET home page.
@@ -160,8 +160,8 @@ exports.save = function(req, res) {
         query = "INSERT INTO walks (date, start, \"end\", path, length, created_at, updated_at) VALUES(?, ?, ?, ?, ST_LENGTH(?, TRUE)/1000, NOW(), NOW()) RETURNING *";
         values = [req.body.date, req.body.start, req.body.end, linestring, linestring];
     }
-    models.sequelize.query(query, Walk, {raw : true}, values).success(function (row) {
-        res.json(row.options.instanceMethods.asObject.call(row, true));
+    models.sequelize.query(query, Walk.build(), {raw : true}, values).success(function (row) {
+        res.json(row.asObject.call(row, true));
     });
 
 };

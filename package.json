@@ -12,7 +12,7 @@
       "async": "*",
       "config": "*",
       "yaml": "*",
-      "sequelize": "*",
+      "sequelize": "2.0.0-dev12",
       "date-utils": "*",
       "geos": "*"
   }
