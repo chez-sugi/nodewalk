@@ -32,29 +32,32 @@ sequelize.define('walks', {
     length:     {
 	type: Sequelize.FLOAT,
     },
+    distance:     {
+    type: Sequelize.FLOAT,
+    },
     path: {
 	type : Sequelize.TEXT,
     }
 }, {
     underscored: true,
     classMethods: {
-	getPoint: function (x, y) {
-	   return util.format('SRID=%d;POINT(%d %d)', SRID, x, y);
-	},
+    	getPoint: function (x, y) {
+    	   return util.format('SRID=%d;POINT(%d %d)', SRID, x, y);
+    	},
         decodePath: function (path) {
             var json = { type: 'LineString', coordinates: encoder.decode(path) };
             return util.format('SRID=%d;%s', SRID, wktwriter.write(jsonreader.read(json)));
         },
-	getPathExtent: function (path) {
-	    var points = encoder.decode(path);
-	    return points.reduce(function (pv, cv) {
-		if (pv.xmax === undefined || pv.xmax < cv[0] ) pv.xmax = cv[0];
-		if (pv.xmin === undefined || pv.xmin > cv[0] ) pv.xmin = cv[0];
-		if (pv.ymax === undefined || pv.ymax < cv[1] ) pv.ymax = cv[1];
-		if (pv.ymin === undefined || pv.ymin > cv[1] ) pv.ymin = cv[1];
-		return pv;
-	    }, {});
-	}
+    	getPathExtent: function (path) {
+    	    var points = encoder.decode(path);
+    	    return points.reduce(function (pv, cv) {
+    		if (pv.xmax === undefined || pv.xmax < cv[0] ) pv.xmax = cv[0];
+    		if (pv.xmin === undefined || pv.xmin > cv[0] ) pv.xmin = cv[0];
+    		if (pv.ymax === undefined || pv.ymax < cv[1] ) pv.ymax = cv[1];
+    		if (pv.ymin === undefined || pv.ymin > cv[1] ) pv.ymin = cv[1];
+    		return pv;
+    	    }, {});
+    	}
     },
     instanceMethods: {
         pathJSON : function () {
@@ -97,8 +100,8 @@ sequelize.define('areas', {
     	},
     	asObject: function () {
     	    return {
-    		jcode:     this.jcode,
-    		the_geom : this.encodedGeom()
+    		    jcode:     this.jcode,
+    		    the_geom : this.encodedGeom()
     	    };
     	}
     }
