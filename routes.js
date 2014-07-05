@@ -115,7 +115,7 @@ exports.search = function(req, res){
         res.json({
             count: result.count,
             params: params,
-            rows:  result.rows.map(function (row) { return row.asObject(result.count > 1); })
+            rows:  result.rows.map(function (row) { return row.asObject(result.count == 1); })
         });
     });
 };
@@ -137,10 +137,11 @@ exports.show = function(req, res) {
         ids = [ids];
     }
     Walk.findAll({
+        attributes : ['id', 'date', 'start', 'end','path', 'length'],
         where  : { id : ids },
     }).success(function ( result) {
         res.json(result.map(function (row) {
-            return row.asObject(false);
+            return row.asObject(true);
         }));
     });
 };
@@ -149,6 +150,7 @@ exports.save = function(req, res) {
     var saveCallback = function (row) {
         res.json(row.asObject());
     };
+    console.log(req.body.path)
     var linestring = Walk.decodePath(req.body.path);
     var query;
     var values;
@@ -161,7 +163,7 @@ exports.save = function(req, res) {
         values = [req.body.date, req.body.start, req.body.end, linestring, linestring];
     }
     models.sequelize.query(query, Walk.build(), {raw : true}, values).success(function (row) {
-        res.json(row.asObject.call(row, true));
+        res.json(row.asObject.call(row, false));
     });
 
 };

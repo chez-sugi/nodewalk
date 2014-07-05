@@ -25,18 +25,18 @@ var sequelize = new Sequelize(config.dbConnection, {
 exports.sequelize = sequelize;
 
 sequelize.define('walks', {
-    id:	        Sequelize.INTEGER,
-    date:       Sequelize.STRING,
+    id:	    Sequelize.INTEGER,
+    date:   Sequelize.STRING,
     start: 	Sequelize.STRING,
     end:	Sequelize.STRING,
-    length:     {
-	type: Sequelize.FLOAT,
+    length: {
+        type: Sequelize.FLOAT,
     },
-    distance:     {
-    type: Sequelize.FLOAT,
+    distance: {
+        type: Sequelize.FLOAT,
     },
     path: {
-	type : Sequelize.TEXT,
+        type : Sequelize.TEXT,
     }
 }, {
     underscored: true,
@@ -66,17 +66,17 @@ sequelize.define('walks', {
     	encodedPath: function () {
     	    return encoder.encode(this.pathJSON().coordinates);
     	},
-    	asObject: function (omitPath) {
+    	asObject: function (includePath) {
     	    return {
-    		id: this.id,
-    		date : this.date.toFormat('YYYY-MM-DD'),
-    		start: this.start,
-    		end: this.end,
-    		length : this.length,
-    		path : omitPath ? null : this.encodedPath(),
-                    created_at: this.created_at,
-                    updated_at: this.updated_at,
-    		distance: this.distance
+                id:         this.id,
+                date :      this.date ? this.date.toFormat('YYYY-MM-DD') : null,
+                start:      this.start,
+                end:        this.end,
+                length :    this.length,
+                path :      (includePath && this.path) ? this.encodedPath() : null,
+                created_at: this.created_at,
+                updated_at: this.updated_at,
+                distance:   this.distance
     	    };
     	}
     }
