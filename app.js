@@ -5,7 +5,7 @@
 
 var express    = require('express');
 var bodyParser = require('body-parser');
-var routes     = require('./routes.js');
+var router     = require('./lib/router.js');
 var http       = require('http');
 var path       = require('path');
 var config     = require('config');
@@ -26,14 +26,7 @@ if ('development' == app.get('env')) {
     app.use(errorhandler());
 }
 
-app.get('/', routes.index);
-app.get('/search', routes.search);
-app.get('/add_city', routes.add_city);
-app.get('/show/:id', routes.show);
-app.get('/destroy/:id', routes.destroy);
-app.post('/show', routes.show);
-app.post('/save', routes.save);
-app.get('/export/:id', routes.export);
+app.use('/', router);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
