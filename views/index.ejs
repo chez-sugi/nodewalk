@@ -22,7 +22,7 @@
     <div class="navbar navbar-default navbar-static-top" id="nav" role="navigation">
         <a class="navbar-brand" href="https://github.com/chez-sugi/nodewalk">NodeWalk</a>
         <ul class="nav navbar-nav">
-            <li><a ng-click="showAdmin()" href="#">Admin</a></li>
+            <li><a ng-click="showAdmin()" href="#">Create...</a></li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     Path
@@ -172,8 +172,9 @@
                             <td>{{ $index + 1 }}</td>
                             <td class="date">{{item.date}}</td>
                             <td class="name"><div>{{item.start}}</div></td><td class="name"><div>{{item.end}}</div></td><td class="way">{{show_distance && item.distance !== undefined ? item.distance : item.length | number:1  }}</td>
-                            <td>
+                            <td class="actions">
                                 <a href="#" class="glyphicon glyphicon-info-sign" ng-click="showInfo(item, $event)"></a>
+                                <a href="#" class="glyphicon glyphicon-pencil" ng-click="showAdmin(item, $event)"></a>
                             </td>
                         </tr>
 
@@ -225,16 +226,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Admin</h4>
+                    <h4 class="modal-title"><span ng-if="!selection.id">Create</span><span ng-if="selection.id">Update</span></h4>
                 </div>
                 <form ng-sbmit="save()" class="form-horizontal" role="form">
+                  <input type="hidden" ng-model="selection.id" class="form-control" />		
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label class="control-label col-xs-3" for="id">id</label>
-                            <div class="col-xs-9">
-                                <input type="text" readonly="readonly" ng-model="selection.id" class="form-control" />
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label class="control-label col-xs-3" for="date">date</label>
                             <div class="col-xs-9">
@@ -256,9 +252,8 @@
                     </div>
                     <input type="hidden" name="save_path" ng-mode="selection.path"  />
                     <div  class="modal-footer">
-                        <button ng-click="save()" class="btn btn-primary"><span class="glyphicon glyphicon-record"></span>save</button>
+                        <button ng-click="save()" class="btn btn-primary"><span class="glyphicon glyphicon-record"></span><span ng-if="!selection.id">create</span><span ng-if="selection.id">update</span></button>
                         <button ng-click="destroy()" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>delete</button>
-                        <button ng-click="resetAdminForm()" class="btn">reset</button>
                     </div>
                 </form>
             </div>
