@@ -14,18 +14,15 @@
 
 ##2. setup config
 
-    % cp config/sample.yml config/development.yml
-    % vi config/development.yml
+    % cp config/sample.json config/development.json
+    % vi config/development.json
 
-```yaml:config/development.yml
-atom:
-  title: nodewalk
-  id: 'tag:asharpminor.com,2013:/nodewalk'
-  author:
-    name: XXX YYY
-    email: XXX@example.com
-dbConnection: 'postgres://user:password@localhost:5433/walkdb'
-port: 3000
+```json:config/development.json
+{
+  "dbConnection": "postgres://user:password@localhost:5433/walkdb",
+  "port": 3000,
+  "twitter_hashtags": "お散歩テスト"
+}
 ```
 
 ##3. node module setup
