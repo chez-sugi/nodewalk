@@ -252,7 +252,7 @@
                     <input type="hidden" name="save_path" ng-mode="selection.path"  />
                     <div  class="modal-footer">
                         <button ng-click="save()" class="btn btn-primary"><span class="glyphicon glyphicon-record"></span><span ng-if="!selection.id">create</span><span ng-if="selection.id">update</span></button>
-                        <button ng-click="destroy()" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>delete</button>
+                        <button ng-if="selection.id" ng-click="destroy()" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>delete</button>
                     </div>
                 </form>
             </div>
