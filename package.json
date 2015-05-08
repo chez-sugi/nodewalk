@@ -15,8 +15,9 @@
       "async": "*",
       "config": "*",
       "yaml": "*",
-      "sequelize": "2.0.0-dev12",
+      "sequelize": "*",
       "date-utils": "*",
-      "geos": "*"
+      "geos": "*",
+      "pg-hstore": "*"
   }
 }
