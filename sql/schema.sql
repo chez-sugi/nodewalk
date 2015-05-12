@@ -1,8 +1,8 @@
 CREATE TABLE walks (
     id serial NOT NULL,
     date date NOT NULL,
-    start text NOT NULL,
-    "end" text NOT NULL,
+    title text NOT NULL,
+    comment text NULL,
     length double precision,
     path geometry,
     created_at timestamp without time zone,
