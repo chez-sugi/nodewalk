@@ -19,7 +19,7 @@ app.set('view engine', 'ejs');
 app.use(morgan());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../web')));
 
 if ('development' == app.get('env')) {
     var errorhandler = require('errorhandler');
