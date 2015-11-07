@@ -1,23 +1,26 @@
 {
-  "name": "nodewalk",
-  "version": "v0.6.0-beta.1",
-  "private": true,
-  "scripts": {
-      "start": "node app.js"
-  },
-  "dependencies": {
-      "express": "4.*",
-      "body-parser": "*",
-      "morgan": "*",
-      "errorhandler": "*",
-      "ejs": "*",
-      "pg": "*",
-      "async": "*",
-      "config": "*",
-      "yaml": "*",
-      "sequelize": "*",
-      "date-utils": "*",
-      "geos": "*",
-      "pg-hstore": "*"
-  }
+    "name": "walkdb-api-node",
+    "version": "v0.6.0-beta.1",
+    "private": true,
+    "scripts": {
+	"start": "node app.js"
+    },
+    "engines": {
+	"node" : "0.10.x"
+    },
+    "dependencies": {
+	"express": "4.*",
+	"body-parser": "*",
+	"morgan": "*",
+	"errorhandler": "*",
+	"ejs": "*",
+	"pg": "*",
+	"async": "*",
+	"config": "*",
+	"yaml": "*",
+	"sequelize": "*",
+	"date-utils": "*",
+	"geos": "*",
+	"pg-hstore": "*"
+    }
 }
