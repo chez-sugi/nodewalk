@@ -16,7 +16,6 @@
 	"ejs": "*",
 	"pg": "*",
 	"async": "*",
-	"config": "*",
 	"yaml": "*",
 	"sequelize": "*",
 	"date-utils": "*",

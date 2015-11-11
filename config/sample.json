@@ -1,5 +1,0 @@
-{
-    "dbConnection": "postgres://user:password@localhost:5433/walkdb",
-    "port": 3000,
-    "twitter_hashtags": "nodewalk"
-}

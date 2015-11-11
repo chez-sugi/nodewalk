@@ -8,12 +8,11 @@ var bodyParser = require('body-parser');
 var router     = require('./lib/router.js');
 var http       = require('http');
 var path       = require('path');
-var config     = require('config');
 var morgan     = require('morgan');
 var app        = express();
 
 // all environments
-app.set('port', config.port || 3000);
+app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(morgan());
