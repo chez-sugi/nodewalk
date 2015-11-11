@@ -1,6 +1,6 @@
 {
     "name": "walkdb-api-node",
-    "version": "v0.6.0-beta.1",
+    "version": "v0.6.0",
     "private": true,
     "scripts": {
 	"start": "node app.js"
@@ -16,10 +16,9 @@
 	"ejs": "*",
 	"pg": "*",
 	"async": "*",
-	"yaml": "*",
 	"sequelize": "*",
 	"date-utils": "*",
-	"geos": "*",
+	"geos": "git://github.com/kashif/node-geos.git",
 	"pg-hstore": "*"
     }
 }
