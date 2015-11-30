@@ -16,7 +16,6 @@
 	"sequelize": "*",
 	"date-utils": "*",
 	"wkx": "git://github.com/cschwarz/wkx.git",
-	"pg-hstore": "*",
-	"marked": "*"
+	"pg-hstore": "*"
     }
 }
