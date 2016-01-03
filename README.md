@@ -1,1 +1,1 @@
-see https://github.com/ssugiyama/walkdb/
+see https://github.com/ssugiyama/walklog/
