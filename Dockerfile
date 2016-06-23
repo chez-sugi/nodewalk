@@ -1,11 +1,15 @@
 FROM node
 MAINTAINER Shinichi SUGIYAMA <shin.sugi@gmail.com>
 
-RUN mkdir -p /usr/src/api
-WORKDIR /usr/src/api
-
-COPY package.json /usr/src/api/
+COPY web /tmp
+WORKDIR /tmp
 RUN npm install
-COPY . /usr/src/api
+RUN npm run build
+RUN mkdir -p /var/www
+WORKDIR /var/www
+RUN mv /tmp/public /var/www
+COPY package.json app.js /var/www/
+COPY lib /var/www/lib
+RUN npm install
 EXPOSE 3000
 CMD [ "npm", "start" ]
