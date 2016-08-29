@@ -1,6 +1,6 @@
 {
-    "name": "walkdb-api-node",
-    "version": "v0.7.0",
+    "name": "walklog-api",
+    "version": "v0.8.0",
     "private": true,
     "scripts": {
 	"start": "node app.js"
@@ -14,9 +14,8 @@
 	"pg": "*",
 	"async": "*",
 	"sequelize": "*",
-	"date-utils": "*",
+	"moment": "*",
 	"wkx": "git://github.com/cschwarz/wkx.git",
-	"pg-hstore": "*",
-	"sitemap": "*"
+	"pg-hstore": "*"
     }
 }

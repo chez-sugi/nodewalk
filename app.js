@@ -5,7 +5,7 @@
 
 var express    = require('express');
 var bodyParser = require('body-parser');
-var router     = require('./lib/router.js');
+var api        = require('./lib/api.js');
 var http       = require('http');
 var path       = require('path');
 var morgan     = require('morgan');
@@ -25,7 +25,7 @@ if ('development' == app.get('env')) {
     app.use(errorhandler());
 }
 
-app.use('/', router);
+app.use('/api', api);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
